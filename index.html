@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Home Inspection Checklist & Report</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        },
+                        amberCustom: '#f59e0b',
+                        dangerCustom: '#ef4444',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Print styles for generating physical or PDF reports */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+                font-size: 11pt;
+            }
+            .print-break-inside-avoid {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            .card-shadow {
+                box-shadow: none !important;
+                border: 1px solid #e5e7eb !important;
+            }
+            .category-section {
+                break-inside: avoid;
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Top Sticky Header -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-md">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold leading-tight text-slate-900">Home Inspection Master Checklist</h1>
+                    <div class="flex items-center text-xs text-slate-500 space-x-2">
+                        <span id="save-status" class="inline-flex items-center text-emerald-600 font-medium">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
+                            Auto-saved
+                        </span>
+                        <span>•</span>
+                        <span id="timestamp-display">Today</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex items-center space-x-2 flex-wrap">
+                <button onclick="window.print()" class="px-3.5 py-2 text-xs font-semibold rounded-lg bg-slate-800 text-white hover:bg-slate-900 transition-colors flex items-center shadow-sm">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    Print / PDF Report
+                </button>
+                <button onclick="exportJSON()" class="px-3 py-2 text-xs font-semibold rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    </svg>
+                    Export Backup
+                </button>
+                <label class="px-3 py-2 text-xs font-semibold rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors flex items-center cursor-pointer">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                    </svg>
+                    Import
+                    <input type="file" id="import-file-input" class="hidden" accept=".json" onchange="importJSON(event)">
+                </label>
+                <button onclick="promptReset()" class="px-3 py-2 text-xs font-semibold rounded-lg text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors">
+                    Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- Progress and Filter Bar -->
+        <div class="bg-slate-50 border-t border-slate-200/80 px-4 sm:px-6 py-2.5">
+            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+                <!-- Status counters -->
+                <div class="flex items-center space-x-3 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0 text-xs">
+                    <div class="flex items-center space-x-1.5 bg-white border border-slate-200 px-2.5 py-1 rounded-md shadow-2xs font-medium">
+                        <span class="text-slate-500">Progress:</span>
+                        <span id="stat-completed" class="font-bold text-slate-800">0 / 0</span>
+                        <span id="stat-percent" class="text-slate-400 font-normal">(0%)</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        <span class="font-medium">Pass:</span>
+                        <span id="stat-pass" class="font-bold">0</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5 bg-amber-50 text-amber-700 border border-amber-200 px-2 py-1 rounded-md">
+                        <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                        <span class="font-medium">Minor:</span>
+                        <span id="stat-minor" class="font-bold">0</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5 bg-rose-50 text-rose-700 border border-rose-200 px-2 py-1 rounded-md">
+                        <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                        <span class="font-medium">Major:</span>
+                        <span id="stat-major" class="font-bold">0</span>
+                    </div>
+                </div>
+
+                <!-- Filter & Search Controls -->
+                <div class="flex items-center space-x-2 w-full sm:w-auto">
+                    <div class="relative flex-1 sm:w-60">
+                        <input type="text" id="search-input" oninput="applyFilters()" placeholder="Filter checklist..." class="w-full text-xs bg-white border border-slate-300 rounded-lg pl-8 pr-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-slate-900">
+                        <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <select id="status-filter" onchange="applyFilters()" class="text-xs bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900">
+                        <option value="all">All Items</option>
+                        <option value="issues">Issues Only (Major & Minor)</option>
+                        <option value="major">Major Concerns Only</option>
+                        <option value="uninspected">Uninspected Only</option>
+                        <option value="notes">Has Notes</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Progress Line Bar -->
+            <div class="w-full bg-slate-200 h-1.5 rounded-full mt-2.5 overflow-hidden">
+                <div id="progress-bar-fill" class="bg-slate-900 h-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full space-y-6">
+
+        <!-- Printable Header (Visible only when printed) -->
+        <div class="hidden print:block border-b-2 border-slate-900 pb-4 mb-6">
+            <h1 class="text-2xl font-black text-slate-900">RESIDENTIAL PROPERTY INSPECTION REPORT</h1>
+            <p class="text-xs text-slate-600">Confidential property observation records prepared for purchaser review</p>
+        </div>
+
+        <!-- Property Overview Card -->
+        <section class="bg-white rounded-xl border border-slate-200/80 shadow-xs p-5 print:border-none print:p-0">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+                <h2 class="text-sm font-bold uppercase tracking-wider text-slate-600 flex items-center">
+                    <svg class="w-4 h-4 mr-2 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                    Property & Inspection Details
+                </h2>
+                <span class="text-xs text-slate-400 no-print">Fill these before walking the property</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Property Address</label>
+                    <input type="text" id="prop-address" oninput="saveMeta()" placeholder="e.g. 123 Maple Street, City, State" class="w-full rounded-md border border-slate-300 px-3 py-2 focus:ring-1 focus:ring-slate-900 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Inspector / Evaluator</label>
+                    <input type="text" id="prop-inspector" oninput="saveMeta()" placeholder="e.g. Mom & Dad, with John" class="w-full rounded-md border border-slate-300 px-3 py-2 focus:ring-1 focus:ring-slate-900 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Inspection Date & Time</label>
+                    <input type="datetime-local" id="prop-date" oninput="saveMeta()" class="w-full rounded-md border border-slate-300 px-3 py-2 focus:ring-1 focus:ring-slate-900 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Weather & Conditions</label>
+                    <input type="text" id="prop-weather" oninput="saveMeta()" placeholder="e.g. 68°F, Sunny, rained yesterday" class="w-full rounded-md border border-slate-300 px-3 py-2 focus:ring-1 focus:ring-slate-900 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Approx. Year Built / Age</label>
+                    <input type="text" id="prop-year" oninput="saveMeta()" placeholder="e.g. 1988 (38 yrs)" class="w-full rounded-md border border-slate-300 px-3 py-2 focus:ring-1 focus:ring-slate-900 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Square Footage & Beds/Baths</label>
+                    <input type="text" id="prop-specs" oninput="saveMeta()" placeholder="e.g. 2,400 sq ft • 4 Bed / 2.5 Bath" class="w-full rounded-md border border-slate-300 px-3 py-2 focus:ring-1 focus:ring-slate-900 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Foundation Type</label>
+                    <input type="text" id="prop-foundation" oninput="saveMeta()" placeholder="e.g. Poured Concrete Basement, Slab, Crawlspace" class="w-full rounded-md border border-slate-300 px-3 py-2 focus:ring-1 focus:ring-slate-900 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Occupancy Status</label>
+                    <input type="text" id="prop-occupancy" oninput="saveMeta()" placeholder="e.g. Vacant, Owner-occupied, Staged" class="w-full rounded-md border border-slate-300 px-3 py-2 focus:ring-1 focus:ring-slate-900 focus:outline-none">
+                </div>
+            </div>
+
+            <!-- Major Summary Quick Notes -->
+            <div class="mt-4 pt-3 border-t border-slate-100">
+                <label class="block font-semibold text-slate-600 text-xs mb-1">Executive Summary / Critical Takeaways</label>
+                <textarea id="prop-summary" oninput="saveMeta()" rows="2" placeholder="Record major negotiation points, seller disclosure conflicts, or priority contractor repair estimates..." class="w-full rounded-md border border-slate-300 p-2.5 text-xs focus:ring-1 focus:ring-slate-900 focus:outline-none"></textarea>
+            </div>
+        </section>
+
+        <!-- Tool Guide / Quick Legend -->
+        <div class="no-print bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex flex-wrap items-center justify-between text-xs text-slate-600 gap-3">
+            <div class="flex items-center space-x-2">
+                <span class="font-bold text-slate-800">Inspection Legend:</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-semibold">Pass: Functioning / Normal</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-semibold">Minor: Monitor / Wear / DIY</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-semibold">Major: Defect / Safety / Costly</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded bg-slate-200 text-slate-700 font-semibold">N/A: Not Present</span>
+            </div>
+            <div class="text-slate-500 italic">
+                Tip: Click item cards to expand or add private notes & pictures
+            </div>
+        </div>
+
+        <!-- Checklist Categories Container -->
+        <div id="checklist-container" class="space-y-6">
+            <!-- Dynamic Category Sections populated by JavaScript -->
+        </div>
+
+        <!-- Add Custom Checklist Item Section -->
+        <section class="no-print bg-white rounded-xl border border-dashed border-slate-300 p-4 shadow-2xs">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center">
+                    <svg class="w-4 h-4 mr-1 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Add Custom Inspection Item (e.g., Swimming Pool, Solar Panels, Septic)
+                </h3>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs">
+                <div class="sm:col-span-4">
+                    <select id="custom-cat-select" class="w-full rounded-md border border-slate-300 px-3 py-2 bg-white">
+                        <!-- Populated by JS categories -->
+                    </select>
+                </div>
+                <div class="sm:col-span-6">
+                    <input type="text" id="custom-title-input" placeholder="Title (e.g., Solar Inverter & Battery Bank)" class="w-full rounded-md border border-slate-300 px-3 py-2">
+                </div>
+                <div class="sm:col-span-2">
+                    <button onclick="addCustomItem()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-2 px-3 rounded-md transition-colors">
+                        Add Item
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400 no-print">
+        <p>Comprehensive Residential Home Buyer Walkthrough Checklist • Built for proactive home buyers</p>
+        <p class="mt-1 text-slate-400">Remember: This checklist provides great insight, but does not substitute a licensed professional home inspector's structural and code certification.</p>
+    </footer>
+
+    <!-- Custom Modal Dialog (Never alerts) -->
+    <div id="modal-container" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 text-slate-800">
+            <h3 id="modal-title" class="text-base font-bold text-slate-900">Confirmation</h3>
+            <p id="modal-body" class="text-xs text-slate-600 mt-2 leading-relaxed">Are you sure?</p>
+            <div class="mt-5 flex justify-end space-x-2">
+                <button id="modal-cancel-btn" class="px-4 py-2 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50">Cancel</button>
+                <button id="modal-confirm-btn" class="px-4 py-2 rounded-lg bg-rose-600 text-white text-xs font-semibold hover:bg-rose-700">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-lg text-xs font-medium shadow-lg transform transition-all duration-300 translate-y-12 opacity-0 pointer-events-none flex items-center space-x-2">
+        <span id="toast-text">Action completed</span>
+    </div>
+
+    <script>
+        /* Inspection dataset definition */
+        const DEFAULT_SECTIONS = [
+            {
+                id: "grounds_exterior",
+                title: "1. Grounds, Drainage & Mountain Slope",
+                icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
+                items: [
+                    { id: "gr_grading", title: "Lot Grading, Mountain Slope & Runoff", tip: "Check hillside drainage path away from foundation. Look for signs of heavy mountain rainfall erosion or pooling near walls." },
+                    { id: "gr_walkways", title: "Driveways, Patios & Walkways", tip: "Check asphalt/concrete driveway condition, slope settling, and proper drainage swales/culverts." },
+                    { id: "gr_retaining", title: "Retaining Walls & Soil Stability", tip: "Inspect any stone/timber hillside retaining walls for leaning, displacement, or lack of gravel drainage backfill." },
+                    { id: "gr_vegetation", title: "Trees, Overhanging Limbs & Forest Fire Clearance", tip: "Check trees near the roofline, power lines, and dead branches posing storm or wind hazards." },
+                    { id: "gr_siding", title: "Exterior Siding, Trim & Paint Condition", tip: "Inspect for wood decay, moisture staining, peeling paint, or carpenter bee bore holes on exterior eaves." },
+                    { id: "gr_deck", title: "Decks, Mountain Porches, Railings & Footings", tip: "Check ledger board lag bolts, structural post anchorage on slopes, guardrail rigidity, and joist hanger nails." },
+                    { id: "gr_faucets", title: "Exterior Spigots & Freeze-Proof Hose Bibs", tip: "Test spigots for water flow and shut-off integrity (crucial in Murphy winter freeze cycles)." }
+                ]
+            },
+            {
+                id: "roof_attic",
+                title: "2. Roof, Gutters & Attic Space",
+                icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4",
+                items: [
+                    { id: "rf_covering", title: "Roof Shingles Age & Condition (~2004 Original?)", tip: "Check if roof is original (20+ years old) or re-shingled. Look for granular loss, curling tabs, or missing shingles." },
+                    { id: "rf_flashing_valleys", title: "Valley Flashing & Dormer Step Flashing", tip: "Inspect metal valley linings and kickout flashing directing mountain water away from siding." },
+                    { id: "rf_gutters", title: "Gutters, Guards & Downspout Discharges", tip: "Confirm gutters are fastened tight and downspouts discharge well down-slope from the foundation perimeter." },
+                    { id: "rf_chimney", title: "Stone Fireplace Chimney & Flue Cap", tip: "Inspect stone masonry, mortar joints, step flashing at roofline, and chimney cap to prevent rain/critter entry." },
+                    { id: "rf_attic_insulation", title: "Attic Insulation & Pull-Down Stairs", tip: "Inspect insulation thickness and check that the attic pull-down stairs has weatherstripping/insulation cover." },
+                    { id: "rf_attic_ventilation", title: "Attic Ventilation & Roof Sheathing", tip: "Check ridge/soffit airflow. Look for dark mildew or condensation stains on underside of plywood decking." }
+                ]
+            },
+            {
+                id: "foundation_crawlspace",
+                title: "3. Foundation, Crawlspace & Moisture Control",
+                icon: "M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z",
+                items: [
+                    { id: "fn_walls", title: "Foundation Stem Walls & Pier Blocks", tip: "Inspect foundation walls for diagonal step-cracking, shifting, or foundation settlement along slope." },
+                    { id: "fn_crawl_moisture", title: "Crawlspace Humidity, Vapor Barrier & Standing Water", tip: "Western NC crawlspaces are prone to high humidity. Check for 100% thick plastic ground vapor barrier or full encapsulation." },
+                    { id: "fn_crawl_dehumidifier", title: "Crawlspace Dehumidifier / Sump (If Present)", tip: "Verify crawlspace dehumidifier is operating, drain line is discharging clear, and relative humidity is below 60%." },
+                    { id: "fn_joists_insulation", title: "Subfloor Framing, Joists & Insulation", tip: "Check for sagging fiberglass batts between floor joists, fungal rot, or musty damp odors." },
+                    { id: "fn_pests_termites", title: "Wood Destroying Organisms (Termites / Beetles)", tip: "Probe sill plates near foundation walls for termite mud tubes or powderpost beetle pinholes." }
+                ]
+            },
+            {
+                id: "mountain_utilities",
+                title: "4. Water Supply, Septic, Propane & Utilities",
+                icon: "M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z",
+                items: [
+                    { id: "ut_water_source", title: "Well / Water Source & Pressure Tank", tip: "Check pressure tank gauge (typically 40/60 PSI cycling). Inspect whole-house water filter and sediment condition." },
+                    { id: "ut_septic_system", title: "On-Site Septic Tank & Drain Field", tip: "Verify septic permit capacity (matches 3 bedrooms). Check yard over drain field for spongy ground, surfacing effluent, or odors." },
+                    { id: "ut_water_heater", title: "Water Heater Age & TPR Relief Valve", tip: "Inspect water heater manufacture date code. Check for tank corrosion, anode condition, and downward TPR discharge tube." },
+                    { id: "ut_propane_gas", title: "LP / Propane Tank, Regulator & Lines", tip: "Inspect exterior propane tank condition, gas shutoff valve, regulator vent, and copper supply line entering the house." },
+                    { id: "ut_gas_fireplace", title: "Stone Gas Log Fireplace Operation", tip: "Test wall switch or remote ignition for gas logs. Check damper operation, gas shutoff key valve, and soot buildup." }
+                ]
+            },
+            {
+                id: "electrical_system",
+                title: "5. Electrical Service, Panels & Wiring",
+                icon: "M13 10V3L4 14h7v7l9-11h-7z",
+                items: [
+                    { id: "el_service", title: "Main Service Panel (200A) & Labeling", tip: "Inspect breaker panel inside or outside. Check for 200 amp main disconnect and clear branch circuit directory." },
+                    { id: "el_panel_defects", title: "Panel Interior Safety (No Double Taps / Scorch)", tip: "Verify breakers have single conductors (no double tapping) and no signs of overheating or scorch marks." },
+                    { id: "el_gfci", title: "GFCI Protection (Kitchen, Bathrooms, Garage, Exterior)", tip: "Trip and reset each GFCI button to confirm ground fault circuit interruption works properly." },
+                    { id: "el_outlets", title: "Outlets Polarity & Grounding", tip: "Use 3-prong receptacle tester in all bedrooms and living areas to verify correct polarity and grounding." },
+                    { id: "el_fixtures", title: "Switches, Ceiling Fans & Lighting", tip: "Check every light switch and ceiling fan on high and low speeds for wobbling or loose mounts." }
+                ]
+            },
+            {
+                id: "hvac_system",
+                title: "6. Heating & Central AC / Heat Pump",
+                icon: "M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
+                items: [
+                    { id: "hv_furnace_age", title: "Heat Pump / Air Handler Age & Condition", tip: "Typical heat pump lifespan is 12-15 years. Check equipment serial number for age and service records." },
+                    { id: "hv_furnace_operation", title: "Heating Mode & Auxiliary Heat Strips Test", tip: "Raise thermostat setpoint. Confirm warm air output and verify emergency/auxiliary electric strip heating activates." },
+                    { id: "hv_ac_condenser", title: "Exterior Heat Pump Compressor / Condenser", tip: "Check outdoor unit: level base pad, clean coil fins, undisturbed refrigerant suction pipe insulation." },
+                    { id: "hv_ac_operation", title: "Cooling Operation & Condensate Drain", tip: "Test cooling mode if outdoor temp >65°F. Inspect indoor condensate drain line to ensure clear flow." },
+                    { id: "hv_air_filter", title: "Return Air Filter & Duct Condition", tip: "Inspect central air return filter cleanliness and visible ductwork sealing." }
+                ]
+            },
+            {
+                id: "kitchen",
+                title: "7. Kitchen & Built-in Appliances",
+                icon: "M3 3h18v18H3V3zm16 16V5H5v14h14z",
+                items: [
+                    { id: "kt_sink_cabinet", title: "Kitchen Sink, Faucet & Under-Sink Plumbing", tip: "Run both hot and cold at high volume; check supply lines, shut-offs, and P-trap for slow drips." },
+                    { id: "kt_range_oven", title: "Range / Cooktop & Oven Elements", tip: "Test all burners and oven bake/broil elements. Check anti-tip security bracket." },
+                    { id: "kt_range_hood", title: "Exhaust Hood & Exterior Vent", tip: "Check exhaust fan speeds and grease filter cleanliness." },
+                    { id: "kt_dishwasher", title: "Dishwasher Cycle & Door Gaskets", tip: "Check for clean door seal, secure counter mounting, and no leaks underneath." },
+                    { id: "kt_counter_cabinets", title: "Cabinets, Drawers & Countertops", tip: "Test soft-close hinges, drawer glides, and verify counters are caulked at backsplash." }
+                ]
+            },
+            {
+                id: "bathrooms",
+                title: "8. Bathrooms & Sanitary Fixtures",
+                icon: "M4 4v7a4 4 0 004 4h8a4 4 0 004-4V4H4z",
+                items: [
+                    { id: "bt_toilet", title: "Toilets (Stability, Flush & Fill Valve)", tip: "Check for loose bowl bolts at the floor and listen for continuous running fill valves." },
+                    { id: "bt_walkin_shower", title: "Walk-In Shower Enclosure, Pan & Drain", tip: "Check shower pan for solid footing (no spongy flex), intact grout/silicone, and rapid drainage." },
+                    { id: "bt_tub", title: "Bathtub & Tile Surround Caulking", tip: "Inspect caulk joint between tub rim and wall tiles; test stopper and overflow drain." },
+                    { id: "bt_sink_vanity", title: "Vanity Cabinets, Faucets & Drains", tip: "Fill basins to top, test drain pop-ups, inspect underneath vanity for moisture." },
+                    { id: "bt_exhaust_fan", title: "Bathroom Ventilation Exhaust Fans", tip: "Verify fan draws air (tissue test) and vents outside rather than into the attic space." }
+                ]
+            },
+            {
+                id: "interior_rooms",
+                title: "9. Interior Rooms, Hardwoods, Windows & Doors",
+                icon: "M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2",
+                items: [
+                    { id: "in_doors", title: "Interior & Exterior Entry Doors", tip: "Check door operation and weatherstripping on all exterior thresholds." },
+                    { id: "in_windows_op", title: "Window Operation, Locks & Double-Pane Seals", tip: "Open and lock windows; inspect for broken insulated vacuum seals causing foggy condensation." },
+                    { id: "in_flooring", title: "Hardwood & Flooring Levelness", tip: "Walk floors checking for squeaks, unlevel slope across rooms, or water discoloration." },
+                    { id: "in_walls_ceilings", title: "Drywall, Trim & Ceilings", tip: "Check for settlement cracks over doors/windows and water stains on ceilings." },
+                    { id: "in_mudroom", title: "Mud Room & Laundry Connections", tip: "Check washing machine water shutoff valves, drain standpipe, and dryer exhaust duct clearance." }
+                ]
+            },
+            {
+                id: "garage_workshop",
+                title: "10. Garage, Workshop & Life Safety",
+                icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
+                items: [
+                    { id: "sa_garage_door", title: "Overhead Garage Door & Auto-Reverse Sensors", tip: "Test electric opener and verify photo-eye safety reversal stops and reverses immediately." },
+                    { id: "sa_workshop_electric", title: "Workshop Electrical Circuits & Lighting", tip: "Inspect subpanels or heavy tool receptacles in the workshop area for proper breaker sizing." },
+                    { id: "sa_smoke_co", title: "Smoke & Carbon Monoxide Detectors", tip: "Smoke detectors in each bedroom/hallway; CO detector required especially with propane fireplace." },
+                    { id: "sa_radon_risk", title: "Radon Gas Risk (Western NC Mountain Bedrock)", tip: "Cherokee County / WNC mountain soil commonly emits radon gas. Verify if a radon test is ordered or mitigation system present." },
+                    { id: "sa_hottub", title: "Hot Tub / Spa Electrical Disconnect (If Installed)", tip: "Verify dedicated exterior emergency GFCI disconnect box located at least 5 feet from the tub." }
+                ]
+            }
+        ];
+
+        /* Local storage state structure */
+        const STORAGE_KEY = "home_inspection_data_138_foothills_v1";
+
+        let state = {
+            meta: {
+                address: "138 Foothill Estates Lane, Murphy, NC 28906",
+                inspector: "",
+                date: "",
+                weather: "",
+                year: "2004 (~22 yrs)",
+                specs: "1,661 sq ft • 3 Bed / 2 Bath • Garage & Workshop",
+                foundation: "Crawlspace / Mountain Slope Stem Wall",
+                occupancy: "Purchase Inspection Walkthrough",
+                summary: "Focus on 2004 systems lifespan (roof & HVAC age), crawlspace vapor barrier/dehumidification, mountain lot slope runoff, septic/well status, and stone gas fireplace LP connections."
+            },
+            sections: JSON.parse(JSON.stringify(DEFAULT_SECTIONS)),
+            itemsData: {} // keyed by item.id -> { status: "pass"|"minor"|"major"|"na"|null, notes: "", photoUrl: "" }
+        };
+
+        function loadSavedState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed.meta) state.meta = { ...state.meta, ...parsed.meta };
+                    if (parsed.itemsData) state.itemsData = { ...parsed.itemsData };
+                    if (parsed.sections && Array.isArray(parsed.sections)) {
+                        // Retain custom items or sections
+                        state.sections = parsed.sections;
+                    }
+                }
+            } catch (e) {
+                console.error("Could not load local storage", e);
+            }
+        }
+
+        function saveToLocalStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                const saveStatusEl = document.getElementById("save-status");
+                if (saveStatusEl) {
+                    saveStatusEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>Saved ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                }
+            } catch (e) {
+                console.error("Could not save to local storage", e);
+            }
+        }
+
+        function saveMeta() {
+            state.meta.address = document.getElementById("prop-address").value;
+            state.meta.inspector = document.getElementById("prop-inspector").value;
+            state.meta.date = document.getElementById("prop-date").value;
+            state.meta.weather = document.getElementById("prop-weather").value;
+            state.meta.year = document.getElementById("prop-year").value;
+            state.meta.specs = document.getElementById("prop-specs").value;
+            state.meta.foundation = document.getElementById("prop-foundation").value;
+            state.meta.occupancy = document.getElementById("prop-occupancy").value;
+            state.meta.summary = document.getElementById("prop-summary").value;
+            saveToLocalStorage();
+        }
+
+        function populateMetaFields() {
+            document.getElementById("prop-address").value = state.meta.address || "";
+            document.getElementById("prop-inspector").value = state.meta.inspector || "";
+            document.getElementById("prop-date").value = state.meta.date || "";
+            document.getElementById("prop-weather").value = state.meta.weather || "";
+            document.getElementById("prop-year").value = state.meta.year || "";
+            document.getElementById("prop-specs").value = state.meta.specs || "";
+            document.getElementById("prop-foundation").value = state.meta.foundation || "";
+            document.getElementById("prop-occupancy").value = state.meta.occupancy || "";
+            document.getElementById("prop-summary").value = state.meta.summary || "";
+
+            // Populate category select dropdown
+            const catSelect = document.getElementById("custom-cat-select");
+            catSelect.innerHTML = state.sections.map(s => `<option value="${s.id}">${s.title}</option>`).join("");
+        }
+
+        function renderChecklist() {
+            const container = document.getElementById("checklist-container");
+            container.innerHTML = "";
+
+            state.sections.forEach((section, sIndex) => {
+                const sectionEl = document.createElement("section");
+                sectionEl.className = "category-section bg-white rounded-xl border border-slate-200/90 shadow-xs overflow-hidden transition-all";
+                sectionEl.id = `sec-${section.id}`;
+
+                // Calculate category stats
+                let totalSec = section.items.length;
+                let doneSec = 0;
+                let issuesSec = 0;
+
+                section.items.forEach(it => {
+                    const data = state.itemsData[it.id] || {};
+                    if (data.status) doneSec++;
+                    if (data.status === 'minor' || data.status === 'major') issuesSec++;
+                });
+
+                const badgeIssue = issuesSec > 0 
+                    ? `<span class="ml-2 text-2xs uppercase px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 font-bold">${issuesSec} issue${issuesSec>1?'s':''}</span>` 
+                    : '';
+
+                sectionEl.innerHTML = `
+                    <div class="category-header bg-slate-50/80 hover:bg-slate-50 px-5 py-4 border-b border-slate-200/80 flex items-center justify-between cursor-pointer select-none" onclick="toggleSectionCollapse('${section.id}')">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-slate-800 text-white flex items-center justify-center shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${section.icon}"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-900 text-sm flex items-center">
+                                    ${section.title}
+                                    ${badgeIssue}
+                                </h3>
+                                <p class="text-xs text-slate-500">${doneSec} of ${totalSec} items inspected</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-semibold text-slate-400 mr-2">${Math.round((doneSec/Math.max(totalSec,1))*100)}%</span>
+                            <button type="button" class="text-slate-400 hover:text-slate-600 no-print">
+                                <svg id="chevron-${section.id}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="items-wrapper-${section.id}" class="divide-y divide-slate-100 p-2 sm:p-4 space-y-3">
+                        <!-- Items list -->
+                    </div>
+                `;
+
+                container.appendChild(sectionEl);
+
+                const itemsWrapper = sectionEl.querySelector(`#items-wrapper-${section.id}`);
+                section.items.forEach(item => {
+                    itemsWrapper.appendChild(createItemElement(item, section.id));
+                });
+            });
+
+            updateGlobalStats();
+            applyFilters();
+        }
+
+        function createItemElement(item, sectionId) {
+            const itemData = state.itemsData[item.id] || { status: null, notes: "", photoUrl: "" };
+            const div = document.createElement("div");
+            div.className = `checklist-item rounded-lg p-3 sm:p-3.5 transition-colors border ${getItemBorderClass(itemData.status)}`;
+            div.id = `item-card-${item.id}`;
+            div.dataset.itemId = item.id;
+            div.dataset.status = itemData.status || "uninspected";
+            div.dataset.hasNotes = (itemData.notes && itemData.notes.trim().length > 0) ? "true" : "false";
+
+            div.innerHTML = `
+                <div class="flex flex-col md:flex-row md:items-start justify-between gap-3">
+                    <div class="flex-1 pr-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="font-semibold text-sm text-slate-900">${item.title}</span>
+                            ${item.isCustom ? '<span class="text-2xs bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-normal">Custom</span>' : ''}
+                        </div>
+                        ${item.tip ? `<p class="text-xs text-slate-500 mt-1 leading-normal italic flex items-start">
+                            <svg class="w-3.5 h-3.5 mr-1 text-slate-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            ${item.tip}
+                        </p>` : ''}
+                    </div>
+
+                    <!-- Status Selector Buttons -->
+                    <div class="flex items-center space-x-1 sm:space-x-1.5 shrink-0 no-print">
+                        <button type="button" onclick="setItemStatus('${item.id}', 'pass')" 
+                            class="status-btn px-2.5 py-1.5 text-xs font-semibold rounded-md border transition-all ${itemData.status === 'pass' ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs' : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300'}">
+                            ✓ Pass
+                        </button>
+                        <button type="button" onclick="setItemStatus('${item.id}', 'minor')" 
+                            class="status-btn px-2.5 py-1.5 text-xs font-semibold rounded-md border transition-all ${itemData.status === 'minor' ? 'bg-amber-500 text-white border-amber-500 shadow-2xs' : 'bg-white text-slate-700 border-slate-200 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-300'}">
+                            ⚠ Minor
+                        </button>
+                        <button type="button" onclick="setItemStatus('${item.id}', 'major')" 
+                            class="status-btn px-2.5 py-1.5 text-xs font-semibold rounded-md border transition-all ${itemData.status === 'major' ? 'bg-rose-600 text-white border-rose-600 shadow-2xs' : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300'}">
+                            ✕ Major
+                        </button>
+                        <button type="button" onclick="setItemStatus('${item.id}', 'na')" 
+                            class="status-btn px-2 py-1.5 text-xs font-semibold rounded-md border transition-all ${itemData.status === 'na' ? 'bg-slate-700 text-white border-slate-700' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-100 hover:text-slate-800'}">
+                            N/A
+                        </button>
+                        <button type="button" onclick="toggleNotes('${item.id}')" title="Add / View Notes"
+                            class="p-1.5 rounded-md border border-slate-200 hover:bg-slate-100 text-slate-600 relative">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            ${itemData.notes && itemData.notes.trim() ? '<span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-sky-500 rounded-full border-2 border-white"></span>' : ''}
+                        </button>
+                    </div>
+
+                    <!-- Print Only Status Display -->
+                    <div class="hidden print:block text-xs font-bold shrink-0">
+                        ${getPrintStatusBadge(itemData.status)}
+                    </div>
+                </div>
+
+                <!-- Collapsible Notes and Media Drawer -->
+                <div id="notes-drawer-${item.id}" class="${(itemData.notes && itemData.notes.trim().length > 0) ? 'block' : 'hidden'} mt-3 pt-3 border-t border-slate-200/70 text-xs">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="font-semibold text-slate-700">Inspector Remarks & Defect Evidence:</label>
+                            <span class="text-2xs text-slate-400 no-print">Auto-saves on typing</span>
+                        </div>
+                        <textarea oninput="saveItemNote('${item.id}', this.value)" rows="2" 
+                            placeholder="Detail finding location, estimated fix, or seller question (e.g. Sump pump didn't run when float raised; slight leak on left P-trap)..."
+                            class="w-full rounded-md border border-slate-300 p-2 text-xs focus:ring-1 focus:ring-slate-900 focus:outline-none bg-slate-50/50">${itemData.notes || ''}</textarea>
+                    </div>
+                </div>
+            `;
+
+            return div;
+        }
+
+        function getItemBorderClass(status) {
+            switch(status) {
+                case 'pass': return 'border-emerald-200 bg-emerald-50/20';
+                case 'minor': return 'border-amber-300 bg-amber-50/30';
+                case 'major': return 'border-rose-300 bg-rose-50/40';
+                case 'na': return 'border-slate-200 bg-slate-100/40 opacity-75';
+                default: return 'border-slate-200/70 bg-white';
+            }
+        }
+
+        function getPrintStatusBadge(status) {
+            switch(status) {
+                case 'pass': return '<span class="text-emerald-700">[PASS]</span>';
+                case 'minor': return '<span class="text-amber-600">[MINOR DEFECT]</span>';
+                case 'major': return '<span class="text-rose-700">[MAJOR CONCERN]</span>';
+                case 'na': return '<span class="text-slate-500">[N/A]</span>';
+                default: return '<span class="text-slate-400">[NOT CHECKED]</span>';
+            }
+        }
+
+        function setItemStatus(itemId, newStatus) {
+            if (!state.itemsData[itemId]) {
+                state.itemsData[itemId] = { status: null, notes: "", photoUrl: "" };
+            }
+
+            // Toggle off if already selected
+            if (state.itemsData[itemId].status === newStatus) {
+                state.itemsData[itemId].status = null;
+            } else {
+                state.itemsData[itemId].status = newStatus;
+                // If marked minor or major, auto-open notes drawer if empty to encourage detail
+                if ((newStatus === 'minor' || newStatus === 'major') && !state.itemsData[itemId].notes) {
+                    const drawer = document.getElementById(`notes-drawer-${itemId}`);
+                    if (drawer) drawer.classList.remove('hidden');
+                }
+            }
+
+            saveToLocalStorage();
+            refreshSingleItemUI(itemId);
+            updateGlobalStats();
+            applyFilters();
+        }
+
+        function refreshSingleItemUI(itemId) {
+            const card = document.getElementById(`item-card-${itemId}`);
+            if (!card) return;
+            const data = state.itemsData[itemId] || { status: null, notes: "" };
+            
+            card.className = `checklist-item rounded-lg p-3 sm:p-3.5 transition-colors border ${getItemBorderClass(data.status)}`;
+            card.dataset.status = data.status || "uninspected";
+            card.dataset.hasNotes = (data.notes && data.notes.trim().length > 0) ? "true" : "false";
+
+            // Update buttons
+            const buttons = card.querySelectorAll(".status-btn");
+            if (buttons.length >= 4) {
+                buttons[0].className = `status-btn px-2.5 py-1.5 text-xs font-semibold rounded-md border transition-all ${data.status === 'pass' ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs' : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300'}`;
+                buttons[1].className = `status-btn px-2.5 py-1.5 text-xs font-semibold rounded-md border transition-all ${data.status === 'minor' ? 'bg-amber-500 text-white border-amber-500 shadow-2xs' : 'bg-white text-slate-700 border-slate-200 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-300'}`;
+                buttons[2].className = `status-btn px-2.5 py-1.5 text-xs font-semibold rounded-md border transition-all ${data.status === 'major' ? 'bg-rose-600 text-white border-rose-600 shadow-2xs' : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300'}`;
+                buttons[3].className = `status-btn px-2 py-1.5 text-xs font-semibold rounded-md border transition-all ${data.status === 'na' ? 'bg-slate-700 text-white border-slate-700' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-100 hover:text-slate-800'}`;
+            }
+        }
+
+        function toggleNotes(itemId) {
+            const drawer = document.getElementById(`notes-drawer-${itemId}`);
+            if (drawer) {
+                drawer.classList.toggle("hidden");
+                if (!drawer.classList.contains("hidden")) {
+                    const textarea = drawer.querySelector("textarea");
+                    if (textarea) textarea.focus();
+                }
+            }
+        }
+
+        function saveItemNote(itemId, noteText) {
+            if (!state.itemsData[itemId]) {
+                state.itemsData[itemId] = { status: null, notes: "", photoUrl: "" };
+            }
+            state.itemsData[itemId].notes = noteText;
+            
+            const card = document.getElementById(`item-card-${itemId}`);
+            if (card) {
+                card.dataset.hasNotes = (noteText && noteText.trim().length > 0) ? "true" : "false";
+            }
+            saveToLocalStorage();
+        }
+
+        function toggleSectionCollapse(sectionId) {
+            const wrapper = document.getElementById(`items-wrapper-${sectionId}`);
+            const chevron = document.getElementById(`chevron-${sectionId}`);
+            if (wrapper) {
+                wrapper.classList.toggle("hidden");
+                if (chevron) {
+                    chevron.classList.toggle("rotate-180");
+                }
+            }
+        }
+
+        function updateGlobalStats() {
+            let totalItems = 0;
+            let inspectedCount = 0;
+            let passCount = 0;
+            let minorCount = 0;
+            let majorCount = 0;
+
+            state.sections.forEach(sec => {
+                sec.items.forEach(item => {
+                    totalItems++;
+                    const itemData = state.itemsData[item.id];
+                    if (itemData && itemData.status) {
+                        inspectedCount++;
+                        if (itemData.status === 'pass') passCount++;
+                        if (itemData.status === 'minor') minorCount++;
+                        if (itemData.status === 'major') majorCount++;
+                    }
+                });
+            });
+
+            const percent = totalItems > 0 ? Math.round((inspectedCount / totalItems) * 100) : 0;
+
+            document.getElementById("stat-completed").innerText = `${inspectedCount} / ${totalItems}`;
+            document.getElementById("stat-percent").innerText = `(${percent}%)`;
+            document.getElementById("stat-pass").innerText = passCount;
+            document.getElementById("stat-minor").innerText = minorCount;
+            document.getElementById("stat-major").innerText = majorCount;
+            document.getElementById("progress-bar-fill").style.width = `${percent}%`;
+        }
+
+        function applyFilters() {
+            const query = (document.getElementById("search-input").value || "").toLowerCase().trim();
+            const filter = document.getElementById("status-filter").value;
+
+            state.sections.forEach(sec => {
+                let sectionHasVisibleItem = false;
+
+                sec.items.forEach(item => {
+                    const card = document.getElementById(`item-card-${item.id}`);
+                    if (!card) return;
+
+                    const titleMatch = item.title.toLowerCase().includes(query) || (item.tip && item.tip.toLowerCase().includes(query));
+                    const data = state.itemsData[item.id] || { status: null, notes: "" };
+                    const status = data.status;
+
+                    let statusMatch = true;
+                    if (filter === "issues") {
+                        statusMatch = (status === "minor" || status === "major");
+                    } else if (filter === "major") {
+                        statusMatch = (status === "major");
+                    } else if (filter === "uninspected") {
+                        statusMatch = (!status);
+                    } else if (filter === "notes") {
+                        statusMatch = (data.notes && data.notes.trim().length > 0);
+                    }
+
+                    if (titleMatch && statusMatch) {
+                        card.style.display = "block";
+                        sectionHasVisibleItem = true;
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+
+                const sectionEl = document.getElementById(`sec-${sec.id}`);
+                if (sectionEl) {
+                    if (sectionHasVisibleItem) {
+                        sectionEl.style.display = "block";
+                    } else {
+                        // Hide empty category if no items match
+                        sectionEl.style.display = (query || filter !== "all") ? "none" : "block";
+                    }
+                }
+            });
+        }
+
+        function addCustomItem() {
+            const catId = document.getElementById("custom-cat-select").value;
+            const titleInput = document.getElementById("custom-title-input");
+            const title = titleInput.value.trim();
+
+            if (!title) {
+                showToast("Please enter an item title");
+                return;
+            }
+
+            const targetSection = state.sections.find(s => s.id === catId);
+            if (!targetSection) return;
+
+            const newItemId = `custom_${Date.now()}`;
+            const newItem = {
+                id: newItemId,
+                title: title,
+                tip: "Custom item added during walkthrough inspection.",
+                isCustom: true
+            };
+
+            targetSection.items.push(newItem);
+            state.itemsData[newItemId] = { status: null, notes: "", photoUrl: "" };
+
+            saveToLocalStorage();
+            renderChecklist();
+            titleInput.value = "";
+            showToast("Custom item added!");
+        }
+
+        function exportJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+            const downloadAnchor = document.createElement('a');
+            const fileName = `home_inspection_${(state.meta.address || "report").replace(/[^a-z0-9]/gi, '_').toLowerCase()}.json`;
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", fileName);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast("Backup exported successfully!");
+        }
+
+        function importJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported && (imported.sections || imported.itemsData || imported.meta)) {
+                        state = imported;
+                        saveToLocalStorage();
+                        populateMetaFields();
+                        renderChecklist();
+                        showToast("Inspection data imported successfully!");
+                    } else {
+                        showToast("Invalid JSON file format");
+                    }
+                } catch (err) {
+                    showToast("Error parsing file");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ""; // reset file input
+        }
+
+        function promptReset() {
+            showModal(
+                "Reset Inspection Checklist?",
+                "This will clear all checked statuses, notes, and property information. If you want to keep your data, consider exporting a backup first.",
+                () => {
+                    localStorage.removeItem(STORAGE_KEY);
+                    state = {
+                        meta: { address: "", inspector: "", date: "", weather: "", year: "", specs: "", foundation: "", occupancy: "", summary: "" },
+                        sections: JSON.parse(JSON.stringify(DEFAULT_SECTIONS)),
+                        itemsData: {}
+                    };
+                    populateMetaFields();
+                    renderChecklist();
+                    showToast("Checklist has been reset to defaults");
+                }
+            );
+        }
+
+        function showModal(title, text, onConfirm) {
+            const modal = document.getElementById("modal-container");
+            document.getElementById("modal-title").innerText = title;
+            document.getElementById("modal-body").innerText = text;
+
+            const cancelBtn = document.getElementById("modal-cancel-btn");
+            const confirmBtn = document.getElementById("modal-confirm-btn");
+
+            modal.classList.remove("hidden");
+
+            const cleanup = () => {
+                modal.classList.add("hidden");
+                cancelBtn.onclick = null;
+                confirmBtn.onclick = null;
+            };
+
+            cancelBtn.onclick = cleanup;
+            confirmBtn.onclick = () => {
+                cleanup();
+                onConfirm();
+            };
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            const toastText = document.getElementById("toast-text");
+            toastText.innerText = message;
+            toast.classList.remove("opacity-0", "translate-y-12", "pointer-events-none");
+            toast.classList.add("opacity-100", "translate-y-0");
+
+            setTimeout(() => {
+                toast.classList.add("opacity-0", "translate-y-12", "pointer-events-none");
+                toast.classList.remove("opacity-100", "translate-y-0");
+            }, 2500);
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            loadSavedState();
+            populateMetaFields();
+            renderChecklist();
+
+            // Set default date if blank
+            if (!state.meta.date) {
+                const now = new Date();
+                const offset = now.getTimezoneOffset() * 60000;
+                const localISOTime = (new Date(now - offset)).toISOString().slice(0, 16);
+                document.getElementById("prop-date").value = localISOTime;
+                state.meta.date = localISOTime;
+                saveToLocalStorage();
+            }
+
+            // Set header date display
+            const dateDisplay = document.getElementById("timestamp-display");
+            if (dateDisplay) {
+                dateDisplay.innerText = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+            }
+        });
+    </script>
+</body>
+</html>
